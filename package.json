@@ -1,0 +1,38 @@
+ {
+    "name": "Sisense",
+    "description": "Test task for Sisense",
+    "homepage": "www.sisense.com",
+
+    "keywords": [
+    "angular",
+    "test",
+    "testing",
+    "webdriver",
+    "webdriverjs",
+    "selenium"
+     ],
+
+    "author": "Oleksandr Honcharuk",
+    "dependencies": {
+    "selenium-webdriver": "latest",
+    "jasmine": "latest",
+    "protractor": "latest",
+    "jasmine-expect":"latest",
+    "protractor-jasmine2-screenshot-reporter": "latest"
+
+  },
+    "devDependencies": {
+    "jshint": "2.9.1"
+  },
+   "bin": {
+     "protractor": "bin/protractor",
+     "webdriver-manager": "bin/webdriver-manager"
+   },
+    "scripts": {
+    "install": "node node_modules/protractor/bin/webdriver-manager update",
+    "test": "protractor conf.js"
+  },
+
+    "license": "MIT",
+    "version": "3.0.0"
+  }
