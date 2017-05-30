@@ -1,14 +1,31 @@
+ // Config for https://www.npmjs.com/package/protractor-jasmine2-screenshot-reporter
 let HtmlScreenshotReporter = require('protractor-jasmine2-screenshot-reporter');
 
 let reporter = new HtmlScreenshotReporter({
-    dest: 'target/screenshots',
+    dest: 'HTMLreport/screenshots',
     filename: 'report.html',
     showSummary: true,
-    reportTitle: "Sisense report"
+    reportTitle: "Title report"
 });
 
-exports.config = {
+module.exports.config = {
+    directConnect: true,
+    framework: 'jasmine2',
+    specs: ['./features/*.js'],
+    jasmineNodeOpts: {
+        defaultTimeoutInterval: 90000
+    },
 
+    capabilities: {
+        'browserName': 'chrome',
+        'ignoreSynchronization': true,
+        'chromeOptions':{
+            //disable "chrome is being controlled by automated software"
+            'args': ['disable-infobars=true']
+        },
+    },
+
+    
     beforeLaunch: function() {
         return new Promise(function(resolve){
             reporter.beforeLaunch(resolve);
@@ -25,37 +42,36 @@ exports.config = {
         global.EC = protractor.ExpectedConditions;
         jasmine.getEnv().addReporter(reporter);
         browser.driver.manage().window().maximize();
-
         
         beforeEach(function() {
         browser.ignoreSynchronization = true;
     });
 
-        afterEach(function() {
-        browser.executeScript('window.sessionStorage.clear();');
-        browser.executeScript('window.localStorage.clear();');
-    });
+        // This function will be executed after each IT block in this DESCRIBE block
+        afterEach(function () {
+            // Wiping cookie files ONLY for current domain
+            browser.manage().deleteAllCookies()
+            // Wiping local and session storage
+            browser.executeScript('window.sessionStorage.clear(); window.localStorage.clear();')
+                    .then(undefined,
+                function (err) {
+                // Errors will be thrown when browser is on default data URL.
+                // Session and Local storage is disabled for data URLs
+                })
+            // Wiping indexedDB
+            browser.executeScript(`
+            indexedDB.webkitGetDatabaseNames().onsuccess = function(sender,args){
+                for (let dbname of sender.target.result) {
+                    indexedDB.deleteDatabase(dbname)
+                }
+            };
+            `).then(undefined,
+                function (err) {
+                // Errors will be thrown when browser is on default data URL.
+                // indexedDB storage is disabled for data URLs
+                })
+        })
 
     },
-
-    directConnect: true,
-
-
-    capabilities: {
-        'browserName': 'chrome',
-        'ignoreSynchronization': true,
-        'chromeOptions':{
-            //disable "chrome is being controlled by automated software"
-            'args': ['disable-infobars=true']
-            
-        }
-    },
-
-    framework: 'jasmine2',
-
-    specs: ['./features/*.js'],
-
-    jasmineNodeOpts: {
-        defaultTimeoutInterval: 80000
-    }
+    
 };
