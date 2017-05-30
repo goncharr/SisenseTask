@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 let EC = protractor.ExpectedConditions
 let BasePage = require('../pageObjects/BasePage.js').BasePage;
 
